@@ -46,7 +46,9 @@ To set up and build the project, follow these steps:
 1. **Connect the OV7670 camera sensor and the VGA PMOD** to the designated FPGA pins.
 2. **Connect a VGA cable** between the VGA PMOD on the FPGA and an external monitor.
 3. **Power on the FPGA and monitor** to start receiving video output.
+
+<img src="arty.jpg" width=50% height=50%>
    
 ## License
 
-This project is released under the MIT License - see the [LICENSE](LICENSE.md) file for details.
+This project is released under the MIT License.
