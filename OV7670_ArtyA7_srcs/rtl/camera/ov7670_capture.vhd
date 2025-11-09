@@ -3,6 +3,11 @@ USE ieee.std_logic_1164.ALL;
 USE ieee.numeric_std.ALL;
 
 ENTITY ov7670_capture IS
+    generic(
+        G_I_WIDTH : integer  := 160; --160 320 640
+        G_I_HEIGHT : integer := 120; --120 240 480
+        G_I_NBITS  : integer := 15
+    );
     PORT (
         clk : IN STD_LOGIC;
         rst : IN STD_LOGIC;
@@ -20,7 +25,7 @@ ENTITY ov7670_capture IS
         --frame_buffer signals
         wea : OUT STD_LOGIC_VECTOR(0 DOWNTO 0);
         dina : OUT STD_LOGIC_VECTOR(11 DOWNTO 0);
-        addra : OUT STD_LOGIC_VECTOR(18 DOWNTO 0)
+        addra : OUT STD_LOGIC_VECTOR(G_I_NBITS -1 DOWNTO 0)
     );
 END ov7670_capture;
 
@@ -43,10 +48,10 @@ ARCHITECTURE rtl OF ov7670_capture IS
     
     TYPE reg_type IS RECORD
         state : state_type;
-        href_cnt : INTEGER RANGE 0 TO 500;
+        href_cnt : INTEGER RANGE 0 TO G_I_HEIGHT;
         rgb_reg : STD_LOGIC_VECTOR(15 DOWNTO 0);
-        pixel_reg : INTEGER RANGE 0 TO 650;
-        bram_address : unsigned(18 DOWNTO 0);
+        pixel_reg : INTEGER RANGE 0 TO G_I_WIDTH;
+        bram_address : unsigned(G_I_NBITS -1 DOWNTO 0);
     END RECORD reg_type;
 
     CONSTANT INIT_REG_FILE : reg_type := (
@@ -120,7 +125,8 @@ BEGIN
             WHEN start_capturing =>
                 IF href_rising_edge = '1' THEN
                     reg_next.pixel_reg <= 0; -- new line: start with pixel position 0
-                    reg_next.state <= capture_line;
+                    --reg_next.state <= capture_line;
+                    reg_next.state <= capture_rgb_byte; --capture_line;
                 END IF;
 
             WHEN capture_line =>
@@ -137,10 +143,10 @@ BEGIN
 
                     reg_next.pixel_reg <= reg.pixel_reg + 1; --keep track of current pixel position in line
 
-                    IF reg.pixel_reg = 639 THEN --line finished
+                    IF reg.pixel_reg = G_I_WIDTH THEN --line finished 639
                         reg_next.href_cnt <= reg.href_cnt + 1;
 
-                        IF reg.href_cnt = 479 THEN
+                        IF reg.href_cnt = G_I_HEIGHT THEN --479
                             reg_next.state <= frame_finished; --frame finished
                         ELSE
                             reg_next.state <= start_capturing; -- wait for start of new line 
@@ -153,7 +159,11 @@ BEGIN
 
             WHEN write_to_bram =>
                 wea <= "1"; --write enable bram
-                dina <= reg.rgb_reg(11 DOWNTO 0); --write 12 bit pixel value to bram
+                dina <= "0000"&reg.rgb_reg(7 DOWNTO 0);
+                --dina <= reg.rgb_reg(11 DOWNTO 0); --write 12 bit pixel value to bram
+                --dina(11 downto 8) <= reg.rgb_reg(15 downto 12); -- R[4:1]
+                --dina(7  downto 4) <= reg.rgb_reg(10 downto 7 ); -- G[5:2]
+                --dina(3  downto 0) <= reg.rgb_reg(3  downto 0 ); -- B[4:1]
                 reg_next.bram_address <= reg.bram_address + 1; --increment address register for next pixel
                 reg_next.state <= capture_line; --capture next pixel
 

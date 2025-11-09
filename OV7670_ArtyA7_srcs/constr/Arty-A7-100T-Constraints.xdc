@@ -132,13 +132,33 @@ set_property -dict {PACKAGE_PIN D10 IOSTANDARD LVCMOS33} [get_ports uart_rxd_out
 set_property -dict {PACKAGE_PIN A9 IOSTANDARD LVCMOS33} [get_ports uart_txd_in]
 
 ## ChipKit Outer Digital Header
-set_property -dict { PACKAGE_PIN V15 IOSTANDARD LVCMOS33 } [get_ports { ov7670_data[6]  }]; #IO_L16P_T2_CSI_B_14 Sch=ck_io[0]
-set_property -dict { PACKAGE_PIN U16 IOSTANDARD LVCMOS33 } [get_ports { ov7670_data[7]  }]; #IO_L18P_T2_A12_D28_14 Sch=ck_io[1]
-set_property -dict {PACKAGE_PIN P14 IOSTANDARD LVCMOS33} [get_ports sda]
-set_property -dict {PACKAGE_PIN T11 IOSTANDARD LVCMOS33} [get_ports scl]
+set_property -dict { PACKAGE_PIN P18 IOSTANDARD LVCMOS33 } [get_ports { ov7670_data[6]  }]; #41
+set_property -dict { PACKAGE_PIN N17 IOSTANDARD LVCMOS33 } [get_ports { ov7670_data[7]  }]; #40
 
-set_property PULLUP true [get_ports scl]
-set_property PULLUP true [get_ports sda]
+set_property -dict {PACKAGE_PIN T18 IOSTANDARD LVCMOS33 PULLUP true} [get_ports {sda}]; # io39
+set_property -dict {PACKAGE_PIN R18 IOSTANDARD LVCMOS33 PULLUP true} [get_ports {scl}]; # io 38
+           
+#set_property -dict {PACKAGE_PIN V15 IOSTANDARD LVCMOS33 PULLUP true} [get_ports {sda2}]; # Sch=ck_io[0]
+#set_property -dict {PACKAGE_PIN U11 IOSTANDARD LVCMOS33 PULLUP true} [get_ports {scl2}]; # Sch=ck_io[26]
+
+set_property -dict {PACKAGE_PIN B7 IOSTANDARD LVCMOS33 PULLUP true} [get_ports {sda2}]; # ChipKit pin=A6
+set_property -dict {PACKAGE_PIN B6 IOSTANDARD LVCMOS33 PULLUP true} [get_ports {scl2}]; # ChipKit pin=A7
+
+set_property -dict { PACKAGE_PIN V15   IOSTANDARD LVCMOS33 } [get_ports { ov7670_2_vsync  }]; #io 0
+set_property -dict { PACKAGE_PIN U16  IOSTANDARD LVCMOS33 } [get_ports { ov7670_2_pclk  }]; #  io1
+set_property -dict { PACKAGE_PIN P14   IOSTANDARD LVCMOS33 } [get_ports { ov7670_2_data[7] }]; #io 2
+set_property -dict { PACKAGE_PIN T11  IOSTANDARD LVCMOS33 } [get_ports { ov7670_2_data[5] }]; #io 3
+set_property -dict { PACKAGE_PIN R12   IOSTANDARD LVCMOS33 } [get_ports { ov7670_2_data[3] }]; #io 4
+set_property -dict { PACKAGE_PIN T14   IOSTANDARD LVCMOS33 } [get_ports { ov7670_2_data[1] }]; #io 5
+set_property -dict { PACKAGE_PIN T15   IOSTANDARD LVCMOS33 } [get_ports { ov7670_2_reset  }]; # RESET io[6]
+
+set_property -dict { PACKAGE_PIN U11   IOSTANDARD LVCMOS33 } [get_ports { ov7670_2_href  }]; #ck_io[26]
+set_property -dict { PACKAGE_PIN V16   IOSTANDARD LVCMOS33 } [get_ports { ov7670_2_xclk  }]; # XCLK   ck_io[27]
+set_property -dict { PACKAGE_PIN M13   IOSTANDARD LVCMOS33 } [get_ports { ov7670_2_data[6]  }]; #   ck_io[28]
+set_property -dict { PACKAGE_PIN R10   IOSTANDARD LVCMOS33 } [get_ports { ov7670_2_data[4]  }]; #   ck_io[29]
+set_property -dict { PACKAGE_PIN R11   IOSTANDARD LVCMOS33 } [get_ports { ov7670_2_data[2]  }]; #   ck_io[30]
+set_property -dict { PACKAGE_PIN R13  IOSTANDARD LVCMOS33 } [get_ports { ov7670_2_data[0]  }]; #   ck_io[31]
+set_property -dict { PACKAGE_PIN R15  IOSTANDARD LVCMOS33 } [get_ports { ov7670_2_pwdn  }]; # PWDN ck_io[32]
 
 #set_property -dict { PACKAGE_PIN R12   IOSTANDARD LVCMOS33 } [get_ports { ck_io4  }]; #IO_L5P_T0_D06_14 Sch=ck_io[4]
 #set_property -dict { PACKAGE_PIN T14   IOSTANDARD LVCMOS33 } [get_ports { ck_io5  }]; #IO_L14P_T2_SRCC_14 Sch=ck_io[5]
