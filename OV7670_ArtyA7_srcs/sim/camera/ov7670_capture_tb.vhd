@@ -15,8 +15,8 @@ ARCHITECTURE sim OF ov7670_capture_tb IS
     CONSTANT pclk_hz : INTEGER := 24e6;
     CONSTANT vga_clk_hz : INTEGER := 25e6;
     
-    constant C_I_WIDTH : integer  := 640; --640
-    constant C_I_HEIGHT : integer := 480; --480
+    constant C_I_WIDTH : integer  := 160; --160 320 640
+    constant C_I_HEIGHT : integer := 120; --120 240 480
     constant C_I_NBITS  : integer := integer(ceil(log2(real( C_I_WIDTH * C_I_HEIGHT + 1))));
     
     constant C_I_WIDTH_T  : integer  := 800; --160 320 640
