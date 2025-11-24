@@ -20,6 +20,19 @@ ENTITY top IS
         ov7670_pwdn : OUT STD_LOGIC;
         ov7670_reset : OUT STD_LOGIC;
         
+        -- controller SDRAM
+        sdram_clk : OUT STD_LOGIC;
+	    sdram_cke : OUT STD_LOGIC;
+	    sdram_cs_n : OUT STD_LOGIC; 
+	    sdram_ras_n : OUT STD_LOGIC;
+	    sdram_cas_n : OUT STD_LOGIC;
+	    sdram_we_n : OUT STD_LOGIC;
+	    sdram_addr : out STD_LOGIC_VECTOR(12 DOWNTO 0);
+	    sdram_ba : out STD_LOGIC_VECTOR(1 DOWNTO 0);
+	    sdram_dqm : out STD_LOGIC_VECTOR(1 DOWNTO 0);
+	    sdram_dq : inout STD_LOGIC_VECTOR(15 DOWNTO 0);
+        
+        
         uart_rxd_out : OUT STD_LOGIC;
         btn : IN STD_LOGIC_VECTOR(3 DOWNTO 0);
         sw : IN STD_LOGIC_VECTOR(3 DOWNTO 0);
@@ -59,7 +72,7 @@ ARCHITECTURE rtl OF top IS
     signal s_sl_VGA_VS : STD_LOGIC;
     
     constant C_I_WIDTH    : integer  := 640; --160 320 640
-    constant C_I_HEIGHT   : integer :=  480; --120 240 480
+    constant C_I_HEIGHT   : integer := 480; --120 240 480
     constant C_I_WIDTH_T  : integer  := 800; --160 320 640
     constant C_I_HEIGHT_T : integer := 500; --120 240 480
     constant C_I_NBITS    : integer := 15; --integer(ceil(log2(real( C_I_WIDTH * C_I_HEIGHT + 1))));
@@ -360,8 +373,8 @@ end process;
         clk_out1 => pxl_clk
     );
 
-    ov7670_xclk   <= xclk_ov7670;
-    ov7670_2_xclk <= xclk_ov7670;
+    ov7670_xclk   <= pxl_clk; --xclk_ov7670;
+    ov7670_2_xclk <= pxl_clk; --xclk_ov7670;
 
     ov7670_configuration : ENTITY work.ov7670_configuration(Behavioral)
         PORT MAP(
@@ -448,15 +461,14 @@ begin
 end process;
         
 
-        fifo_generator : fifo_generator_0
+  fifo_generator : fifo_generator_0
  PORT map(
    rst         => rst,
    wr_clk      => buf2_pclk,--clk,
-   rd_clk      => pxl_clk,
+   rd_clk      => xclk_ov7670, --pxl_clk,
    din         => "0000"&buf2_data, --dina,
    wr_en       => buf2_href, --wea(0),
-
-   rd_en       => s_sl_disp_ena, --web(0), --s_sl_rd_fifo_en(0),
+   rd_en       => fifo_rd_en, --s_sl_disp_ena, --web(0), --s_sl_rd_fifo_en(0),
    dout        => doutb,
    full        => s_slv_fifo_full(0),
    empty       => s_slv_fifo_empty(0),
@@ -492,8 +504,8 @@ end process;
     v_fp      => 10, --: INTEGER := 1;      --vertical front porch width in rows
     v_pol     => '1' )--: STD_LOGIC := '1'); --vertical sync pulse polarity (1 = positive, 0 = negative)
   PORT map(
-    pixel_clk => pxl_clk,--: IN   STD_LOGIC;  --pixel clock at frequency of VGA mode being used
-    reset_n   => not(rst), --vga_reset_n, --s_sl_start_camera, --not(rst),--: IN   STD_LOGIC;  --active low asycnchronous reset
+    pixel_clk => xclk_ov7670,--: IN   STD_LOGIC;  --pixel clock at frequency of VGA mode being used
+    reset_n   => vga_reset_n, --s_sl_start_camera, --not(rst),--: IN   STD_LOGIC;  --active low asycnchronous reset
 
     h_sync    => s_sl_h_sync  ,--: OUT  STD_LOGIC;  --horiztonal sync pulse
     v_sync    => s_sl_v_sync  ,--: OUT  STD_LOGIC;  --vertical sync pulse
